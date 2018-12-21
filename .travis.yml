@@ -21,7 +21,7 @@ before_script:
 
 script:
   - cd "$TRAVIS_BUILD_DIR/../easyengine"
-  - sudo travis_wait 30 ./vendor/bin/behat features/labels.feature
+  - travis_wait 30 sudo ./vendor/bin/behat features/labels.feature
 
 after_script:
   - cat /opt/easyengine/logs/ee.log
