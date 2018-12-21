@@ -45,11 +45,3 @@ Feature: Site Command
       And Following containers of site 'site.test' should be removed:
         | container  |
         | nginx      |
-
-  Scenario: Create wildcard SSL site
-    When Create site config setting
-    And I run 'bin/ee site create a.mbtest.gq --type=wp --ssl=le --wildcard'
-    Then STDOUT should return something like
-    """
-    Configuring project.
-    """
