@@ -424,13 +424,12 @@ class FeatureContext implements Context
 	}
 
 	/**
-	 * @When I create wildcard ssl site
+	 * @When Create site config setting
 	 */
 	public function iCreateSslSite()
 	{
 		$this->setSslApiKey();
 		$this->setSslEmail();
-		exec( 'sudo bin/ee site create a.mbtest.gq --type=wp --ssl=le --wildcard' );
 	}
 
 	public function setSslApiKey()

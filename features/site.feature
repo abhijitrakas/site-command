@@ -46,5 +46,10 @@ Feature: Site Command
         | container  |
         | nginx      |
 
-  Scenario: I create wildcard ssl site
-    When I create wildcard ssl site
+  Scenario: Create wildcard SSL site
+    When Create site config setting
+    And I run 'bin/ee site create a.mbtest.gq --type=wp --ssl=le --wildcard'
+    Then STDOUT should return something like
+    """
+    Configuring project.
+    """
