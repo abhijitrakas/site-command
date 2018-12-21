@@ -10,8 +10,9 @@ Feature: Container Labels
 
   Scenario: Create wildcard SSL site
     When Create site config setting
-    And I run '/bin/bash -c 'echo "127.0.0.1 a.mbtest.gq" >> /etc/hosts'
+    And I run '/bin/bash -c 'echo "127.0.0.1 a.mbtest.gq" >> /etc/hosts''
     And I run 'bin/ee site create a.mbtest.gq --type=wp --ssl=le --wildcard'
+    Then After delay of 5 seconds
     Then STDOUT should return something like
       """
       Configuring project.
