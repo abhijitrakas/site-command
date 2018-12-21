@@ -403,7 +403,8 @@ class FeatureContext implements Context
 			'www.example1.test',
 			'example2.test',
 			'www.example3.test',
-			'labels.test'
+			'labels.test',
+			'a.mbtest.gq'
 		];
 
 		$result = EE::launch( 'sudo bin/ee site list --format=text',false, true );
@@ -420,5 +421,36 @@ class FeatureContext implements Context
 		if(file_exists('ee-old.phar')) {
 			unlink('ee-old.phar');
 		}
+	}
+
+	/**
+	 * @When I create wildcard ssl site
+	 */
+	public function iCreateSslSite()
+	{
+		$this->setSslApiKey();
+		$this->setSslEmail();
+		exec( 'sudo bin/ee site create a.mbtest.gq --type=wp --ssl=le --wildcard' );
+	}
+
+	public function setSslApiKey()
+	{
+		$command = sprintf(
+			'sudo bin/ee config set cloudflare-api-key %s',
+			getenv( 'CLOUDFLARE_API_KEY' )
+		);
+		exec( $command );
+	}
+
+	/**
+	 * Function to set ssl email.
+	 */
+	public function setSslEmail()
+	{
+		$command = sprintf(
+			'sudo bin/ee config set le-mail=%s',
+			getenv( 'CLOUDFLARE_EMAIL' )
+		);
+		exec( $command );
 	}
 }

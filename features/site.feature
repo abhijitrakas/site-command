@@ -45,3 +45,6 @@ Feature: Site Command
       And Following containers of site 'site.test' should be removed:
         | container  |
         | nginx      |
+
+  Scenario: I create wildcard ssl site
+    When I create wildcard ssl site
