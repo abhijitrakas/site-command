@@ -59,6 +59,18 @@ class FeatureContext implements Context
 	public $ee_path;
 
 	/**
+	 * Sites to be deleted after behat test completed.
+	 *
+	 * @var array
+	 */
+	public static $test_sites = [
+		'example.test',
+		'www.example1.test',
+		'labels.test',
+		'site.test',
+	];
+
+	/**
 	 * Initializes context.
 	 */
 	public function __construct()
@@ -395,20 +407,10 @@ class FeatureContext implements Context
 	 */
 	public static function cleanup(AfterFeatureScope $scope)
 	{
-		$test_sites = [
-			'wp.test',
-			'wpsubdom.test',
-			'wpsubdir.test',
-			'example.test',
-			'www.example1.test',
-			'example2.test',
-			'www.example3.test',
-			'labels.test'
-		];
 
 		$result = EE::launch( 'sudo bin/ee site list --format=text',false, true );
 		$running_sites = explode( "\n", $result->stdout );
-		$sites_to_delete = array_intersect( $test_sites, $running_sites );
+		$sites_to_delete = array_intersect( self::$test_sites, $running_sites );
 
 		foreach ( $sites_to_delete as $site ) {
 			exec("sudo bin/ee site delete $site --yes" );
@@ -419,6 +421,102 @@ class FeatureContext implements Context
 		}
 		if(file_exists('ee-old.phar')) {
 			unlink('ee-old.phar');
+		}
+	}
+
+	/**
+	 * @When Create site configuration
+	 */
+	public function setApiKeyAndEmail()
+	{
+		$set_api_key = sprintf(
+			'sudo bin/ee config set cloudflare-api-key "%s"',
+			getenv('CLOUDFLARE_API_KEY')
+		);
+
+		EE::launch( $set_api_key, false, true );
+
+		$set_email = sprintf(
+			'sudo bin/ee config set le-mail "%s"',
+			getenv('CLOUDFLARE_EMAIL')
+		);
+
+		EE::launch( $set_email, false, true );
+
+	}
+
+	/**
+	 * @When Create SSL wildcard site
+	 */
+	public function createSslWildCardSite()
+	{
+		$time = time();
+		$domain = $time . '.' . getenv('TEST_DOMAIN');
+		// Add site to delete after all tests completed.
+		self::$test_sites[] = $domain;
+		$this->createSite( $domain );
+		$command_output = $this->commands[$domain]->stdout;
+
+		if (strpos($command_output, 'Success: SSL verification completed.') === false) {
+			throw new Exception("Actual output is:\n" . $command_output);
+		}
+		// verify site SSL.
+		$this->verifySiteSsl($domain);
+
+	}
+
+	/**
+	 * @When Create SSL wildcard site without API key
+	 */
+	public function createSslWildCardSiteWithoutApiKey()
+	{
+		$time = time();
+
+		$domain = $time . '.' . getenv('TEST_DOMAIN');
+		// Add site to delete after all tests completed.
+		self::$test_sites[] = $domain;
+		// Create site with the given domain.
+		$this->createSite( $domain );
+		$expected_output = "Domain: _acme-challenge.$domain.";
+		$command_output  = $this->commands[$domain]->stdout;
+
+		if (strpos($command_output, $expected_output) === false) {
+			throw new Exception("Actual output is:\n" . $command_output);
+		}
+	}
+
+	/**
+	 * Create data test site
+	 *
+	 * @param string $domain Domain to create site.
+	 *
+	 * @return string
+	 */
+	public function createSite( $domain )
+	{
+		$command = sprintf(
+			'bin/ee site create %s --ssl=le --wildcard',
+			$domain
+		);
+		$this->commands[$domain] = EE::launch($command, false, true);
+	}
+
+	/**
+	 * Verify site SSL using openssl
+	 *
+	 * @param string $domain Site name.
+	 *
+	 * @return void
+	 */
+	public function verifySiteSsl($domain)
+	{
+		$command = sprintf(
+			"openssl s_client -servername %s -connect localhost:443 < /dev/null",
+			$domain
+		);
+		$data = EE::launch($command, false, true);
+		if ( strpos( $data->stdout, "CN=Let's Encrypt Authority" ) === false ) {
+			throw new Exception("Let's Encrypt Authority SSL not found.");
 		}
 	}
 }
