@@ -21,7 +21,7 @@ before_script:
 
 script:
   - cd "$TRAVIS_BUILD_DIR/../easyengine"
-  - sudo ./vendor/bin/behat
+  - travis_wait sudo ./vendor/bin/behat
 
 after_script:
   - cat /opt/easyengine/logs/ee.log
