@@ -22,7 +22,7 @@ before_script:
 script:
   - cd "$TRAVIS_BUILD_DIR/../easyengine"
   - |
-    # Run all Scenario if 'TRAVIS_EVENT_TYPE' is `api`
+    # Run all Scenario if 'TRAVIS_EVENT_TYPE' is 'api'
     if [[ "$TRAVIS_EVENT_TYPE" == "api" ]]; then
       sudo ./vendor/bin/behat
     else
