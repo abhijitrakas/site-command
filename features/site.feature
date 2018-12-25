@@ -45,3 +45,15 @@ Feature: Site Command
       And Following containers of site 'site.test' should be removed:
         | container  |
         | nginx      |
+
+  @api
+  Scenario: Create wildcard ssl site without cloudflare api key
+    When Create SSL wildcard site without API key
+
+  @api
+  Scenario: Add SSL configuration
+    When Create site configuration
+
+  @api
+  Scenario: Create wildcard ssl site
+    When Create SSL wildcard site

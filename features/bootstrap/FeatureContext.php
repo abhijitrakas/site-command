@@ -430,7 +430,7 @@ class FeatureContext implements Context
 	public function setApiKeyAndEmail()
 	{
 		$set_api_key = sprintf(
-			'sudo bin/ee config set cloudflare-api-key "%s"',
+			'bin/ee config set cloudflare-api-key "%s"',
 			getenv('CLOUDFLARE_API_KEY')
 		);
 
@@ -515,7 +515,7 @@ class FeatureContext implements Context
 		);
 		$data = EE::launch($command, false, true);
 		if ( strpos( $data->stdout, "CN=Let's Encrypt Authority" ) === false ) {
-			throw new Exception("Let's Encrypt Authority SSL not found.");
+			throw new Exception("Let's Encrypt Authority SSL not found.\n Actual output is:\n" . $data->stdout);
 		}
 	}
 }
