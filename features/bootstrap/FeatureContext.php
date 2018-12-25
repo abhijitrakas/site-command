@@ -68,6 +68,8 @@ class FeatureContext implements Context
 		'www.example1.test',
 		'labels.test',
 		'site.test',
+		'www.example3.test',
+		'example2.test'
 	];
 
 	/**
@@ -516,6 +518,21 @@ class FeatureContext implements Context
 		$data = EE::launch($command, false, true);
 		if ( strpos( $data->stdout, "CN = Let's Encrypt Authority" ) === false ) {
 			throw new Exception("Let's Encrypt Authority SSL not found.\n Actual output is:\n" . $data->stdout);
+		}
+	}
+
+	/**
+	 * @Then Verify self signed certificate for :site
+	 */
+	public function verifySelfSignedCertificate($site)
+	{
+		$command = sprintf(
+			"openssl s_client -servername %s -connect localhost:443 < /dev/null",
+			$site
+		);
+		$data = EE::launch($command, false, true);
+		if ( strpos( $data->stdout, "CN = EasyEngine" ) === false ) {
+			throw new Exception("Self signed certificate not found.\n Actual output is:\n" . $data->stdout);
 		}
 	}
 }
