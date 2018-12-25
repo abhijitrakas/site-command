@@ -495,7 +495,7 @@ class FeatureContext implements Context
 	public function createSite( $domain )
 	{
 		$command = sprintf(
-			'bin/ee site create %s --ssl=le --wildcard',
+			'sudo bin/ee site create %s --ssl=le --wildcard',
 			$domain
 		);
 		$this->commands[$domain] = EE::launch($command, false, true);
@@ -511,7 +511,7 @@ class FeatureContext implements Context
 	public function verifySiteSsl($domain)
 	{
 		$command = sprintf(
-			"openssl s_client -servername %s -connect localhost:443 < /dev/null",
+			"sudo openssl s_client -servername %s -connect localhost:443 < /dev/null",
 			$domain
 		);
 		$data = EE::launch($command, false, true);
