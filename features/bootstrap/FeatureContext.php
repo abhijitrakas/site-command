@@ -514,7 +514,7 @@ class FeatureContext implements Context
 			$domain
 		);
 		$data = EE::launch($command, false, true);
-		if ( strpos( $data->stdout, "CN=Let's Encrypt Authority" ) === false ) {
+		if ( strpos( $data->stdout, "CN = Let's Encrypt Authority" ) === false ) {
 			throw new Exception("Let's Encrypt Authority SSL not found.\n Actual output is:\n" . $data->stdout);
 		}
 	}

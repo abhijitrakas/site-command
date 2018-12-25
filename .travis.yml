@@ -24,12 +24,10 @@ script:
   - |
     # Run all Scenario if 'TRAVIS_EVENT_TYPE' is `api`
     if [[ "$TRAVIS_EVENT_TYPE" == "api" ]]; then
-      :
+      sudo ./vendor/bin/behat
     else
-      flags="--tags '~@api'"
+      sudo ./vendor/bin/behat --tags '~@api'
     fi
-
-    sudo ./vendor/bin/behat $flags
 
 after_script:
   - cat /opt/easyengine/logs/ee.log
