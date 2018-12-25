@@ -436,13 +436,6 @@ class FeatureContext implements Context
 
 		EE::launch( $set_api_key, false, true );
 
-		$set_email = sprintf(
-			'sudo bin/ee config set le-mail "%s"',
-			getenv('CLOUDFLARE_EMAIL')
-		);
-
-		EE::launch( $set_email, false, true );
-
 	}
 
 	/**
@@ -470,6 +463,12 @@ class FeatureContext implements Context
 	 */
 	public function createSslWildCardSiteWithoutApiKey()
 	{
+		$set_email = sprintf(
+			'bin/ee config set le-mail "%s"',
+			getenv('CLOUDFLARE_EMAIL')
+		);
+
+		EE::launch( $set_email, false, true );
 		$time = time();
 
 		$domain = $time . '.' . getenv('TEST_DOMAIN');
@@ -495,7 +494,7 @@ class FeatureContext implements Context
 	public function createSite( $domain )
 	{
 		$command = sprintf(
-			'sudo bin/ee site create %s --ssl=le --wildcard',
+			'bin/ee site create %s --ssl=le --wildcard',
 			$domain
 		);
 		$this->commands[$domain] = EE::launch($command, false, true);
@@ -511,7 +510,7 @@ class FeatureContext implements Context
 	public function verifySiteSsl($domain)
 	{
 		$command = sprintf(
-			"sudo openssl s_client -servername %s -connect localhost:443 < /dev/null",
+			"openssl s_client -servername %s -connect localhost:443 < /dev/null",
 			$domain
 		);
 		$data = EE::launch($command, false, true);
