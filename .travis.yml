@@ -22,12 +22,14 @@ before_script:
 script:
   - cd "$TRAVIS_BUILD_DIR/../easyengine"
   - |
-    # Run all Scenario if `TRAVIS_EVENT_TYPE` is `api`
-    if [[ "$TRAVIS_EVENT_TYPE" === "api" ]]; then
-      - sudo ./vendor/bin/behat
+    # Run all Scenario if 'TRAVIS_EVENT_TYPE' is `api`
+    if [[ "$TRAVIS_EVENT_TYPE" == "api" ]]; then
+      :
     else
-      - sudo ./vendor/bin/behat --tags '~@api'
+      flags="--tags '~@api'"
     fi
+
+    sudo ./vendor/bin/behat $flags
 
 after_script:
   - cat /opt/easyengine/logs/ee.log
