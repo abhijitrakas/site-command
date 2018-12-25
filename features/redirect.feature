@@ -21,7 +21,7 @@ Feature: Site Redirection
   @self
   Scenario: no_www-ssl redirection works properly
     When I run 'bin/ee site create example2.test --ssl=self'
-    Then After delay of 2 seconds
+    Then After delay of 5 seconds
     Then Request on 'localhost' with header 'Host: www.example2.test' should contain following headers:
       | header                           |
       | HTTP/1.1 301 Moved Permanently   |
@@ -39,7 +39,7 @@ Feature: Site Redirection
   @self
   Scenario: www-ssl redirection works properly
     When I run 'bin/ee site create www.example3.test --ssl=self'
-    Then After delay of 2 seconds
+    Then After delay of 5 seconds
     Then Request on 'localhost' with header 'Host: example3.test' should contain following headers:
       | header                               |
       | HTTP/1.1 301 Moved Permanently       |
